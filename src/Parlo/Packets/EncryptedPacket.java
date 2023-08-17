@@ -59,7 +59,7 @@ public class EncryptedPacket extends Packet
             case AES:
             default:
                 AES aes = new AES(Args.Key, HexStringToByteArray(Args.Salt));
-                return aes.Decrypt(GetData());
+                return aes.Decrypt(getData());
             case Twofish:
                 throw new UnsupportedOperationException("Twofish encryption not supported in standard Java.");
         }
@@ -79,7 +79,7 @@ public class EncryptedPacket extends Packet
             	try
             	{
             		AES aes = new AES(Args.Key, HexStringToByteArray(Args.Salt));
-            		encryptedData = aes.Encrypt(GetData());
+            		encryptedData = aes.Encrypt(getData());
             	}
             	catch(Exception exception)
             	{
@@ -96,8 +96,8 @@ public class EncryptedPacket extends Packet
         
         try
         {
-	        dataOut.write(GetID());
-	        dataOut.write(GetIsCompressed());
+	        dataOut.write(getID());
+	        dataOut.write(getIsCompressed());
 	        dataOut.writeShort(encryptedData.length + PacketHeaders.STANDARD);
 	        dataOut.write(encryptedData);
 	        dataOut.flush();
@@ -140,7 +140,7 @@ public class EncryptedPacket extends Packet
         if (p == null)
             throw new IllegalArgumentException("Packet");
 
-        return new EncryptedPacket(args, p.GetID(), p.GetData());
+        return new EncryptedPacket(args, p.getID(), p.getData());
     }
 }
 

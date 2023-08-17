@@ -203,18 +203,18 @@ public class NetworkClient
     	{
     		public void onProcessedPacket(Packet packet)
     		{
-                if (packet.GetID() == (byte)ParloIDs.SGoodbye.ordinal())
+                if (packet.getID() == (byte)ParloIDs.SGoodbye.ordinal())
                 {
                     onServerDisconnected(NetworkClient.this);
                     return;
                 }
                 //Client notified server of disconnection.
-                if (packet.GetID() == (byte)ParloIDs.CGoodbye.ordinal())
+                if (packet.getID() == (byte)ParloIDs.CGoodbye.ordinal())
                 {
                     onClientDisconnected(NetworkClient.this);
                     return;
                 }
-                if (packet.GetID() == (byte)ParloIDs.Heartbeat.ordinal())
+                if (packet.getID() == (byte)ParloIDs.Heartbeat.ordinal())
                 {
                 	//isAlive and missedHeartbeats will be updated asynchronously,
                 	//but it shouldn't matter in this case because the proceeding
@@ -229,7 +229,7 @@ public class NetworkClient
                         missedHeartbeatsLock.release();
                     });
 
-                    HeartbeatPacket Heartbeat = HeartbeatPacket.ByteArrayToObject(packet.GetData());
+                    HeartbeatPacket Heartbeat = HeartbeatPacket.ByteArrayToObject(packet.getData());
                     // Calculate the duration between now and the timestamp from the Heartbeat packet
                     Duration duration = Duration.between(Instant.now(), Heartbeat.GetSentTimestamp());
                     lastRTT = (int)(duration.toMillis() + Heartbeat.GetTimeSinceLast().toMillis());
@@ -239,12 +239,12 @@ public class NetworkClient
                     return;
                 }
 
-                if (packet.GetIsCompressed() == 1)
+                if (packet.getIsCompressed() == 1)
                 {
                 	try
                 	{
-	                    byte[] DecompressedData = decompressData(packet.GetData());
-	                    onReceivedData(NetworkClient.this, new Packet(packet.GetID(), 
+	                    byte[] DecompressedData = decompressData(packet.getData());
+	                    onReceivedData(NetworkClient.this, new Packet(packet.getID(), 
 	                    		DecompressedData, false));
                 	}
                 	catch(IOException exception)
@@ -308,18 +308,18 @@ public class NetworkClient
     	{
     		public void onProcessedPacket(Packet packet)
     		{
-                if (packet.GetID() == (byte)ParloIDs.SGoodbye.ordinal())
+                if (packet.getID() == (byte)ParloIDs.SGoodbye.ordinal())
                 {
                     onServerDisconnected(NetworkClient.this);
                     return;
                 }
                 //Client notified server of disconnection.
-                if (packet.GetID() == (byte)ParloIDs.CGoodbye.ordinal())
+                if (packet.getID() == (byte)ParloIDs.CGoodbye.ordinal())
                 {
                     onClientDisconnected(NetworkClient.this);
                     return;
                 }
-                if (packet.GetID() == (byte)ParloIDs.Heartbeat.ordinal())
+                if (packet.getID() == (byte)ParloIDs.Heartbeat.ordinal())
                 {
                 	//isAlive and missedHeartbeats will be updated asynchronously,
                 	//but it shouldn't matter in this case because the proceeding
@@ -334,7 +334,7 @@ public class NetworkClient
                         missedHeartbeatsLock.release();
                     });
 
-                    HeartbeatPacket Heartbeat = HeartbeatPacket.ByteArrayToObject(packet.GetData());
+                    HeartbeatPacket Heartbeat = HeartbeatPacket.ByteArrayToObject(packet.getData());
                     // Calculate the duration between now and the timestamp from the Heartbeat packet
                     Duration duration = Duration.between(Instant.now(), Heartbeat.GetSentTimestamp());
                     lastRTT = (int)(duration.toMillis() + Heartbeat.GetTimeSinceLast().toMillis());
@@ -344,12 +344,12 @@ public class NetworkClient
                     return;
                 }
 
-                if (packet.GetIsCompressed() == 1)
+                if (packet.getIsCompressed() == 1)
                 {
                 	try
                 	{
-	                    byte[] DecompressedData = decompressData(packet.GetData());
-	                    onReceivedData(NetworkClient.this, new Packet(packet.GetID(), 
+	                    byte[] DecompressedData = decompressData(packet.getData());
+	                    onReceivedData(NetworkClient.this, new Packet(packet.getID(), 
 	                    		DecompressedData, false));
                 	}
                 	catch(IOException exception)
@@ -659,7 +659,7 @@ public class NetworkClient
                     GoodbyePacket ByePacket = new GoodbyePacket(ParloDefaultTimeouts.Client.ordinal());
                     byte[] ByeData = ByePacket.ToByteArray();
                     Packet Goodbye = new Packet((byte)ParloIDs.CGoodbye.ordinal(), ByeData, false);
-                    sendAsync(Goodbye.BuildPacket());
+                    sendAsync(Goodbye.buildPacket());
     			}
     		}
     		
@@ -716,7 +716,7 @@ public class NetworkClient
                     byte[] heartbeatData = heartbeat.ToByteArray();
                     Packet Pulse = new Packet((byte)ParloIDs.Heartbeat.ordinal(), 
                     		heartbeatData, false);
-                    sendAsync(Pulse.BuildPacket());
+                    sendAsync(Pulse.buildPacket());
                     
                     Thread.sleep(heartbeatInterval * 1000);
     			}

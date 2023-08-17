@@ -13,6 +13,7 @@ Contributor(s): ______________________________________.
 package Parlo.Packets;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class Packet 
 {
@@ -60,33 +61,34 @@ public class Packet
         m_Data = SerializedData;
     }
 
-    public byte GetID() 
+    public byte getID() 
     {
         return m_ID;
     }
 
-    public byte GetIsCompressed() 
+    public byte getIsCompressed() 
     {
         return m_IsCompressed;
     }
 
-    public short GetLength() 
+    public short getLength() 
     {
         return m_Length;
     }
 
-    public byte[] GetData() 
+    public byte[] getData() 
     {
         return m_Data;
     }
 
-    public byte[] BuildPacket() 
+    public byte[] buildPacket() 
     {
         ByteBuffer buffer;
 
         if (!m_IsUDP) 
         {
             buffer = ByteBuffer.allocate(4 + m_Data.length);
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
             buffer.put(m_ID);
             buffer.put(m_IsCompressed);
             buffer.putShort(m_Length);
@@ -94,6 +96,7 @@ public class Packet
         else 
         {
             buffer = ByteBuffer.allocate(5 + m_Data.length);
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
             buffer.put(m_ID);
             buffer.put(m_IsCompressed);
             buffer.put(m_IsReliable);
