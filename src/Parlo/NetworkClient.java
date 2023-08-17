@@ -229,10 +229,10 @@ public class NetworkClient
                         missedHeartbeatsLock.release();
                     });
 
-                    HeartbeatPacket Heartbeat = HeartbeatPacket.ByteArrayToObject(packet.getData());
+                    HeartbeatPacket Heartbeat = HeartbeatPacket.byteArrayToObject(packet.getData());
                     // Calculate the duration between now and the timestamp from the Heartbeat packet
-                    Duration duration = Duration.between(Instant.now(), Heartbeat.GetSentTimestamp());
-                    lastRTT = (int)(duration.toMillis() + Heartbeat.GetTimeSinceLast().toMillis());
+                    Duration duration = Duration.between(Instant.now(), Heartbeat.getSentTimestamp());
+                    lastRTT = (int)(duration.toMillis() + Heartbeat.getTimeSinceLast().toMillis());
                     
                     onReceivedHeartbeat(NetworkClient.this);
 
@@ -334,10 +334,10 @@ public class NetworkClient
                         missedHeartbeatsLock.release();
                     });
 
-                    HeartbeatPacket Heartbeat = HeartbeatPacket.ByteArrayToObject(packet.getData());
+                    HeartbeatPacket Heartbeat = HeartbeatPacket.byteArrayToObject(packet.getData());
                     // Calculate the duration between now and the timestamp from the Heartbeat packet
-                    Duration duration = Duration.between(Instant.now(), Heartbeat.GetSentTimestamp());
-                    lastRTT = (int)(duration.toMillis() + Heartbeat.GetTimeSinceLast().toMillis());
+                    Duration duration = Duration.between(Instant.now(), Heartbeat.getSentTimestamp());
+                    lastRTT = (int)(duration.toMillis() + Heartbeat.getTimeSinceLast().toMillis());
                     
                     onReceivedHeartbeat(NetworkClient.this);
 
@@ -713,7 +713,7 @@ public class NetworkClient
     				}
     				
     				lastHeartbeatSent = Instant.now();
-                    byte[] heartbeatData = heartbeat.ToByteArray();
+                    byte[] heartbeatData = heartbeat.toByteArray();
                     Packet Pulse = new Packet((byte)ParloIDs.Heartbeat.ordinal(), 
                     		heartbeatData, false);
                     sendAsync(Pulse.buildPacket());

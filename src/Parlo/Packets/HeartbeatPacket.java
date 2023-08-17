@@ -31,17 +31,17 @@ public class HeartbeatPacket implements Serializable
         this.m_SentTimestamp = Instant.now();
     }
 
-    public Duration GetTimeSinceLast() 
+    public Duration getTimeSinceLast() 
     {
         return m_TimeSinceLast;
     }
 
-    public Instant GetSentTimestamp() 
+    public Instant getSentTimestamp() 
     {
         return m_SentTimestamp;
     }
 
-    public byte[] ToByteArray() 
+    public byte[] toByteArray() 
     {
         try 
         {
@@ -58,7 +58,7 @@ public class HeartbeatPacket implements Serializable
         }
     }
 
-    public static HeartbeatPacket ByteArrayToObject(byte[] ArrBytes) 
+    public static HeartbeatPacket byteArrayToObject(byte[] ArrBytes) 
     {
         try 
         {
