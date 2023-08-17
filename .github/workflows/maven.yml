@@ -29,4 +29,4 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
 
     - name: Build with Maven and run tests
-      run: mvn -f Parlo/pom.xml clean verify
+      run: mvn -f pom.xml clean verify
