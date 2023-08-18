@@ -192,6 +192,139 @@ public class NetworkClient
     		networkErrorCallback.onNetworkError(exception);
     }
     
+    /**
+     * Initializes a client that listens for data.
+     * Consumed by Parlo.tests.NetworkClientTests.
+     * @param clientChannel The client's channel
+     * @param server The Listener instance calling this constructor.
+     * @param heartbeatInterval The interval at which heartbeats are sent.
+     * @param onClientDisconnectedDelegate The delegate to be called when the client disconnects. Can be null.
+     * @param onClientConnectionLost The delegate to be called when the client's connection is lost. Can be null.
+     */
+    public NetworkClient(IAsyncSocketChannel clientChannel, Listener server, int heartbeatInterval, 
+    		ClientDisconnectedDelegate onClientDisconnectedDelegate, OnConnectionLostDelegate onClientConnectionLost)
+    {
+    	if(clientChannel == null || server == null)
+    		throw new IllegalArgumentException("clientChannel or server was null in NetworkClient constructor!");
+    	
+    	this.sockChannel = clientChannel;
+    	this.server = server;
+    	
+    	recvBuf = ByteBuffer.wrap(new byte[ProcessingBuffer.MAX_PACKET_SIZE]);
+    	
+        int numberOfCores = PhysicalCores.physicalCoreCount();
+        int numLogicalProcessors = Runtime.getRuntime().availableProcessors();
+    	
+    	missedHeartbeatsLock = new Semaphore((numberOfCores > numLogicalProcessors) ? 
+        		numberOfCores : numLogicalProcessors);
+    	isAliveLock = new Semaphore((numberOfCores > numLogicalProcessors) ? 
+        		numberOfCores : numLogicalProcessors);
+    	connectedLock = new Semaphore((numberOfCores > numLogicalProcessors) ? 
+        		numberOfCores : numLogicalProcessors);
+    	
+    	this.processingBuffer = new ProcessingBuffer(new ProcessedPacketDelegate()
+    	{
+    		public void onProcessedPacket(Packet packet)
+    		{
+                if (packet.getID() == (byte)ParloIDs.SGoodbye.ordinal())
+                {
+                    onServerDisconnected(NetworkClient.this);
+                    return;
+                }
+                //Client notified server of disconnection.
+                if (packet.getID() == (byte)ParloIDs.CGoodbye.ordinal())
+                {
+                    onClientDisconnected(NetworkClient.this);
+                    return;
+                }
+                if (packet.getID() == (byte)ParloIDs.Heartbeat.ordinal())
+                {
+                	//isAlive and missedHeartbeats will be updated asynchronously,
+                	//but it shouldn't matter in this case because the proceeding
+                	//code doesn't depend on them.
+                    SemaphoreUtils.waitAsync(isAliveLock).thenRun(() -> {
+                        isAlive = true;
+                        isAliveLock.release();
+                    });
+
+                    SemaphoreUtils.waitAsync(missedHeartbeatsLock).thenRun(() -> {
+                        missedHeartbeats = 0;
+                        missedHeartbeatsLock.release();
+                    });
+
+                    HeartbeatPacket Heartbeat = HeartbeatPacket.byteArrayToObject(packet.getData());
+                    // Calculate the duration between now and the timestamp from the Heartbeat packet
+                    Duration duration = Duration.between(Instant.now(), Heartbeat.getSentTimestamp());
+                    lastRTT = (int)(duration.toMillis() + Heartbeat.getTimeSinceLast().toMillis());
+                    
+                    onReceivedHeartbeat(NetworkClient.this);
+
+                    return;
+                }
+
+                if (packet.getIsCompressed() == 1)
+                {
+                	try
+                	{
+	                    byte[] DecompressedData = decompressData(packet.getData());
+	                    onReceivedData(NetworkClient.this, new Packet(packet.getID(), 
+	                    		DecompressedData, false));
+                	}
+                	catch(IOException exception)
+                	{
+                		Logger.log("Received badly compressed data!", LogLevel.error);
+                	}
+                	catch(InterruptedException exception)
+                	{
+                		Logger.log("Thread was interrupted: " + exception.getMessage(), 
+                				LogLevel.error);
+                	}
+                	catch(ExecutionException exception)
+                	{
+                		Logger.log("ExecutionException: " + exception.getMessage(), 
+                				LogLevel.error);
+                	}
+                }
+                else
+                {
+                	try
+                	{
+                		onReceivedData(NetworkClient.this, packet);
+                	}
+                	catch(InterruptedException exception)
+                	{
+                		Logger.log("Thread was interrupted: " + exception.getMessage(), 
+                				LogLevel.error);
+                	}
+                	catch(ExecutionException exception)
+                	{
+                		Logger.log("ExecutionException: " + exception.getMessage(), 
+                				LogLevel.error);
+                	}
+                }
+    		}
+    	});
+    	
+    	setClientDisconnectedCallback(onClientDisconnectedDelegate);
+    	setConnectionLostCallback(onClientConnectionLost);
+    	
+    	missedHeartbeats = 0;
+    	this.heartbeatInterval = heartbeatInterval;
+    	checkForMissedHeartbeats();
+    	
+        SemaphoreUtils.waitAsync(connectedLock).thenRun(() -> 
+        {
+            connected = true;
+            connectedLock.release();
+        });
+        
+        receiveAsync();
+    }
+    
+    /**
+     * Creates a new NetworkClient for connecting to a remote server.
+     * @param sockChannel The IAsyncSocketChannel for connecting.
+     */
     public NetworkClient(IAsyncSocketChannel sockChannel)
     {
     	if(sockChannel == null)
