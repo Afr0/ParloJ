@@ -436,6 +436,9 @@ public class NetworkClient
      */
     public NetworkClient(IAsyncSocketChannel sockChannel, Listener server)
     {
+    	if(sockChannel == null || server == null)
+    		throw new IllegalArgumentException("sockChannel or server was null in NetworkClient constructor!");
+    	
         int numberOfCores = PhysicalCores.physicalCoreCount();
         int numLogicalProcessors = Runtime.getRuntime().availableProcessors();
     	
