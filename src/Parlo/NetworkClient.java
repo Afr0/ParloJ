@@ -51,6 +51,15 @@ public class NetworkClient
 	private InetSocketAddress localEP;
 	
 	/**
+	* Is this client connected?
+	* @return True if it is, false if it isn't.
+	*/
+	public boolean isConnected()
+	{
+		return connected;
+	}
+	
+	/**
 	 * Should compression be applied to data before transmission?
 	 */
 	public boolean applyCompression = false;
