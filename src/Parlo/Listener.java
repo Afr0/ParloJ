@@ -56,7 +56,7 @@ public class Listener implements AutoCloseable
                         	public void onClientDisconnected(NetworkClient client)
                         	{
                         		Logger.log("Client disconnected!", LogLevel.info);
-                        		OnClientDisconnected(client);
+                        		onClientDisconnected(client);
                         		networkClients.remove(client);
                         		//TODO: Dispose() of client...
                         	}
@@ -67,7 +67,7 @@ public class Listener implements AutoCloseable
                         	public void onConnectionLost(NetworkClient client)
                         	{
                         		Logger.log("Client connection lost!", LogLevel.info);
-                        		OnClientDisconnected(client);
+                        		onClientDisconnected(client);
                         		networkClients.remove(client);
                         		//TODO: Dispose() of client...
                         	}
@@ -79,7 +79,7 @@ public class Listener implements AutoCloseable
                         networkClients.add(newClient);
 
                         if (onConnected != null)
-                            OnClientConnected(newClient);
+                            onClientConnected(newClient);
                     }
                 }
             } 
@@ -120,7 +120,7 @@ public class Listener implements AutoCloseable
      * Notifies a consumer that a client has disconnected.
      * @param client The client that disconnected.
      */
-    private void OnClientDisconnected(NetworkClient client) 
+    protected void onClientDisconnected(NetworkClient client) 
     {
         if (disconnectedCallback != null)
             disconnectedCallback.onClientDisconnected(client);
@@ -162,7 +162,7 @@ public class Listener implements AutoCloseable
      * Notifies a consumer that a client has connected.
      * @param client The client that connected.
      */
-    private void OnClientConnected(NetworkClient client) 
+    protected void onClientConnected(NetworkClient client) 
     {
         if (disconnectedCallback != null) 
             onConnected.onConnected(client);
