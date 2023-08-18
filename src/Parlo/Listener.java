@@ -127,6 +127,29 @@ public class Listener implements AutoCloseable
     }
     
     /**
+     * The client missed too many heartbeats, so assume it's disconnected.
+     * @param client The client in question.
+     */
+    protected void onClientConnectionLost(NetworkClient client)
+    {
+        Logger.log("Client connection lost!", LogLevel.info);
+        
+        if (disconnectedCallback != null)
+            disconnectedCallback.onClientDisconnected(client);
+        
+        try
+        {
+	        networkClients.take();
+	        //client.DisposeAsync();
+	        //Dispose();
+        }
+        catch(Exception exception)
+        {
+        	Logger.log("Exception in Listener.onClientConnectionLost: " + exception.getMessage(), LogLevel.info);
+        }
+    }
+    
+    /**
      * Sets a callback to be notified of when a client connected.
      * @param callback The callback to set.
      */
