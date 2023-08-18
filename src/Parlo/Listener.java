@@ -14,7 +14,7 @@ public class Listener implements AutoCloseable
     private OnConnectedDelegate onConnected;
     public boolean applyCompression = true;
     
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    protected ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public Listener(IAsyncSocketChannel sock) 
     {
