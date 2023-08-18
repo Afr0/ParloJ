@@ -423,6 +423,8 @@ public class NetworkClient
                 }
     		}
     	});
+    	
+    	recvBuf = ByteBuffer.wrap(new byte[ProcessingBuffer.MAX_PACKET_SIZE]);
     }
     
     /**
