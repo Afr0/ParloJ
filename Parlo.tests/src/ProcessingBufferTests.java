@@ -82,7 +82,7 @@ public class ProcessingBufferTests
 
         try 
         {
-            processingBuffer.addData(/*data*/packet.BuildPacket());
+            processingBuffer.addData(/*data*/packet.buildPacket());
             assertFalse(eventFired[0]);
             
             processingBuffer.addData(new byte[] { 8, 9, 10 });
