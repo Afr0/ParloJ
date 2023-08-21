@@ -201,7 +201,7 @@ public class NetworkClient
      * @param onClientDisconnectedDelegate The delegate to be called when the client disconnects. Can be null.
      * @param onClientConnectionLost The delegate to be called when the client's connection is lost. Can be null.
      */
-    public NetworkClient(IAsyncSocketChannel clientChannel, Listener server, int heartbeatInterval, 
+    public NetworkClient(IAsyncSocketChannel clientChannel, Listener server, int heartbeatInterval, int maxMissedHeartbeats, 
     		ClientDisconnectedDelegate onClientDisconnectedDelegate, OnConnectionLostDelegate onClientConnectionLost)
     {
     	if(clientChannel == null || server == null)
@@ -308,7 +308,7 @@ public class NetworkClient
     	setClientDisconnectedCallback(onClientDisconnectedDelegate);
     	setConnectionLostCallback(onClientConnectionLost);
     	
-    	missedHeartbeats = 0;
+    	this.maxMissedHeartbeats = maxMissedHeartbeats;
     	this.heartbeatInterval = heartbeatInterval;
     	checkForMissedHeartbeats();
     	
