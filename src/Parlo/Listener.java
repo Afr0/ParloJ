@@ -1,5 +1,6 @@
 package Parlo;
 
+import Parlo.CancellationTokenSource;
 import java.net.*;
 import java.util.concurrent.*;
 import java.util.logging.*;
@@ -15,16 +16,18 @@ public class Listener implements AutoCloseable
     public boolean applyCompression = true;
     
     protected ExecutorService executor = Executors.newSingleThreadExecutor();
+    protected CancellationTokenSource acceptCTS;
 
     public Listener(IAsyncSocketChannel sock) 
     {
         this.listenerSock = sock;
     }
 
-    public void initializeAsync(InetSocketAddress localEP, int maxPacketSize) 
+    public void initializeAsync(InetSocketAddress localEP, int maxPacketSize, CancellationTokenSource acceptCTS) 
     		throws IOException 
     {
         this.localEP = localEP;
+        this.acceptCTS = acceptCTS;
 
         if (maxPacketSize != 1024)
             ProcessingBuffer.MAX_PACKET_SIZE = maxPacketSize;
@@ -42,6 +45,9 @@ public class Listener implements AutoCloseable
             {
                 while (true) 
                 {
+                	if(acceptCTS.isCancellationRequested())
+                		break;
+                	
                     IAsyncSocketChannel acceptedSocketInterface = listenerSock.accept().get();
                     ParloSocketChannel acceptedSocket = (ParloSocketChannel)acceptedSocketInterface;
 
