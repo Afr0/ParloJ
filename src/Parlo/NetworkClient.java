@@ -54,6 +54,15 @@ public class NetworkClient
 	private int heartbeatInterval = 30; //In seconds.
 	private int maxMissedHeartbeats = 6;
 	
+	/**
+	 * Sets the internal interval for sending and checking for heartbeats.
+	 * @param interval The interval to set.
+	 */
+	public void setHeartbeatInterval(int interval)
+	{
+		heartbeatInterval = interval;
+	}
+	
 	private Semaphore isAliveLock;
 	private boolean isAlive = true;
 	
