@@ -21,9 +21,6 @@ import java.time.Instant;
  */
 public class GoodbyePacket implements Serializable 
 {
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Duration timeOut;
     private Instant sentTime;
@@ -34,17 +31,17 @@ public class GoodbyePacket implements Serializable
         this.sentTime = Instant.now();
     }
 
-    public Duration GetTimeOut() 
+    public Duration getTimeOut() 
     {
         return timeOut;
     }
 
-    public Instant GetSentTime() 
+    public Instant getSentTime() 
     {
         return sentTime;
     }
 
-    public byte[] ToByteArray() 
+    public byte[] toByteArray() 
     {
         try 
         {
@@ -61,7 +58,7 @@ public class GoodbyePacket implements Serializable
         }
     }
 
-    public static GoodbyePacket ByteArrayToObject(byte[] arrBytes) 
+    public static GoodbyePacket byteArrayToObject(byte[] arrBytes) 
     {
         try 
         {
