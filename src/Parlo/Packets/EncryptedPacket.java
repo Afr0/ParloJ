@@ -29,6 +29,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
+import gnu.crypto.cipher.IBlockCipher;
+import gnu.crypto.cipher.Twofish;
+import java.util.HashMap;
 
 /*
  * Represents an encrypted packet.
@@ -90,7 +93,7 @@ public class EncryptedPacket extends Packet
             default:
             	try
             	{
-            		AES aes = new AES(Args.Key, HexStringToByteArray(Args.Salt));
+            		AES aes = new AES(Args.Key, hexStringToByteArray(Args.Salt));
             		encryptedData = aes.Encrypt(getData());
             	}
             	catch(Exception exception)
@@ -116,7 +119,7 @@ public class EncryptedPacket extends Packet
         }
         catch(IOException exception)
         {
-        	Logger.log("Error while building writing encrypted packet: " + exception.toString(), 
+        	Logger.log("Error while writing encrypted packet: " + exception.toString(), 
         			LogLevel.error);
         }
 
@@ -128,7 +131,7 @@ public class EncryptedPacket extends Packet
      * @param s The hex string to convert.
      * @return The converted string as a byte array.
      */
-    private byte[] HexStringToByteArray(String s) 
+    private byte[] hexStringToByteArray(String s) 
     {
         int len = s.length();
         byte[] data = new byte[len / 2];
@@ -145,7 +148,7 @@ public class EncryptedPacket extends Packet
      * @param p The Packet instance from which to create a EncryptedPacket instance.
      * @return The new EncryptedPacket instance.
      */
-    public static EncryptedPacket FromPacket(EncryptionArgs args, Packet p) 
+    public static EncryptedPacket fromPacket(EncryptionArgs args, Packet p) 
     {
         if(args == null)
             throw new IllegalArgumentException("Args");
