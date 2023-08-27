@@ -6,6 +6,9 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
 import java.io.IOException;
 
+/**
+ * An interface for a socket channel. Used to enable mocking of socket channels in unit tests.
+ */
 public interface IAsyncSocketChannel 
 {
 	/**

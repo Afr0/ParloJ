@@ -16,6 +16,9 @@ import java.io.*;
 import java.time.Duration;
 import java.time.Instant;
 
+/**
+ * An internal class sent by the client and server before disconnecting.
+ */
 public class GoodbyePacket implements Serializable 
 {
     /**

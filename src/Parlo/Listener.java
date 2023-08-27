@@ -6,6 +6,9 @@ import java.util.concurrent.*;
 import java.util.logging.*;
 import java.io.IOException;
 
+/**
+ * Represents a listener that listens for incoming clients.
+ */
 public class Listener implements AutoCloseable 
 {
     protected BlockingQueue<NetworkClient> networkClients = new LinkedBlockingQueue<>();

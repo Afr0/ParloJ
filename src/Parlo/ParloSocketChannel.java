@@ -7,6 +7,10 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
 import java.util.concurrent.*;
 
+/**
+ * A wrapper for the AsynchronousSocketChannel and AsynchronousServerSocketChannel that
+ * implements IAsyncSocketChannel.
+ */
 public class ParloSocketChannel implements IAsyncSocketChannel
 {
 

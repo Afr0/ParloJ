@@ -30,10 +30,19 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
 
+/*
+ * Represents an encrypted packet.
+ */
 public class EncryptedPacket extends Packet 
 {
     private EncryptionArgs Args;
 
+    /**
+     * Creates an instance of EncryptedPacket.
+     * @param args The {@link EncryptionArgs} used for this packet's encryption.
+     * @param id The ID of the packet.
+     * @param serializedData The serialized data to send.
+     */
     public EncryptedPacket(EncryptionArgs args, byte id, byte[] serializedData) 
     {
         super(id, serializedData, false);
@@ -52,13 +61,13 @@ public class EncryptedPacket extends Packet
      * @throws UnsupportedOperationException If Twofish is selected as the encryption algorithm,
      * 			as it hasn't been implemented yet.
      */
-    public byte[] DecryptPacket() throws Exception 
+    public byte[] decryptPacket() throws Exception 
     {
         switch (Args.Mode) 
         {
             case AES:
             default:
-                AES aes = new AES(Args.Key, HexStringToByteArray(Args.Salt));
+                AES aes = new AES(Args.Key, hexStringToByteArray(Args.Salt));
                 return aes.Decrypt(getData());
             case Twofish:
                 throw new UnsupportedOperationException("Twofish encryption not supported in standard Java.");
@@ -67,6 +76,9 @@ public class EncryptedPacket extends Packet
 
     /**
      * Returns this EncryptedPacket instance as an array of bytes.
+     * The encryption mode used will depend on what mode is specified
+     * in the EncryptionArgs instance used to create this EncryptedPacket
+     * instance. If Twofish was selected, the key HAS to be 16 chars long.
      */
     public byte[] BuildPacket()
     {

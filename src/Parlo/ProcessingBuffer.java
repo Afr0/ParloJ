@@ -63,7 +63,6 @@ public class ProcessingBuffer implements AutoCloseable
                         if (!m_HasReadHeader) 
                         {
                             m_CurrentID = internalBuffer.take();
-
                             m_IsCompressed = internalBuffer.take();
 
                             byte[] LengthBuf = new byte[2];
@@ -90,7 +89,7 @@ public class ProcessingBuffer implements AutoCloseable
 
                             Packet P;
                             P = new Packet(m_CurrentID, PacketData, m_IsCompressed == 1);
-
+                            
                             onProcessedPacketDelegate.onProcessedPacket(P);
                         }
                     }

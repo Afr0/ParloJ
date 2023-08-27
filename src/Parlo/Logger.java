@@ -12,16 +12,27 @@ Contributor(s): ______________________________________.
 
 package Parlo;
 
+/**
+ * A class for subscribing to messages logged by Parlo.
+ */
 public class Logger 
 {
-
         private static MessageLoggedDelegate onMessageLogged;
 
+        /**
+         * Sets a delegate for subscribing to logged messages.
+         * @param onMessageLogged The delegate for subscribing.
+         */
         public static void setOnMessageLogged(MessageLoggedDelegate onMessageLogged) 
         {
             Logger.onMessageLogged = onMessageLogged;
         }
 
+        /**
+         * Logs a message.
+         * @param message The message to log.
+         * @param level The level of the log message.
+         */
         public static void log(String message, LogLevel level) 
         {
             LogMessage logMessage = new LogMessage(message, level);

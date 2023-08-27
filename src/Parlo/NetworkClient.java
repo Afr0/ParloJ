@@ -195,7 +195,7 @@ public class NetworkClient
     /**
      * Initializes a client that listens for data.
      * Consumed by Parlo.tests.NetworkClientTests.
-     * @param clientChannel The client's channel
+     * @param clientChannel The client's channel.
      * @param server The Listener instance calling this constructor.
      * @param heartbeatInterval The interval at which heartbeats are sent.
      * @param onClientDisconnectedDelegate The delegate to be called when the client disconnects. Can be null.
@@ -804,7 +804,7 @@ public class NetworkClient
                     //Set the timeout to five seconds by default for clients,
                     //even though it's not really important for clients.
                     GoodbyePacket ByePacket = new GoodbyePacket(ParloDefaultTimeouts.Client.ordinal());
-                    byte[] ByeData = ByePacket.ToByteArray();
+                    byte[] ByeData = ByePacket.toByteArray();
                     Packet Goodbye = new Packet((byte)ParloIDs.CGoodbye.ordinal(), ByeData, false);
                     sendAsync(Goodbye.buildPacket());
     			}
@@ -839,6 +839,10 @@ public class NetworkClient
     	}
     }
     
+    /**
+     * Periodically sends a heartbeat to the server.
+     * How often is determined by heartbeatInterval.
+     */
     private void sendHeartbeatAsync()
     {
     	CompletableFuture<?> future = CompletableFuture.runAsync(() ->
@@ -893,6 +897,10 @@ public class NetworkClient
         }));
     }
     
+    /**
+     * Periodically checks for missed heartbeats. How often
+     * is determined by heartbeatInterval.
+     */
     private void checkForMissedHeartbeats()
     {
     	CompletableFuture future = CompletableFuture.runAsync(() ->
